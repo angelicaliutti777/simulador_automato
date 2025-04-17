@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador de Autômato Finito</title>
+</head>
+<body>
+    <h1>Simulador de Autômato Finito</h1>
+    <input type="file" id="autFile" accept=".aut"><br><br>
+    <input type="file" id="inFile" accept=".in"><br><br>
+    <button onclick="simular()">Simular</button>
+
+    <script>
+        function simular() {
+            const autInput = document.getElementById('autFile').files[0];
+            const inInput = document.getElementById('inFile').files[0];
+
+            if (!autInput || !inInput) {
+                alert('Por favor, selecione ambos os arquivos!');
+                return;
+            }
+
+            const readerAut = new FileReader();
+            readerAut.onload = function () {
+                const aut = JSON.parse(readerAut.result);
+                const readerIn = new FileReader();
+                readerIn.onload = function () {
+                    const entradas = readerIn.result.trim().split('\n');
+                    const saidas = entradas.map(linha => {
+                        const [palavra, esperada] = linha.split(';');
+                        const resultado = aceita(aut, palavra) ? 1 : 0;
+                        console.log(`Processando: ${palavra} -> Resultado: ${resultado}`); // Adicionando log para depuração
+                        return `${palavra};${resultado}`;
+                    });
+                    console.log('Saídas geradas:', saidas); // Verificando a lista de saídas
+                    baixarArquivo(saidas.join('\n'), 'saida.out');
+                };
+                readerIn.readAsText(inInput);
+            };
+            readerAut.readAsText(autInput);
+        }
+
+        function aceita(aut, palavra) {
+            let estado = aut.initial;
+            for (const simbolo of palavra) {
+                const trans = aut.transitions.find(t => t.from === estado && t.read === simbolo);
+                if (!trans) return false;
+                estado = trans.to;
+            }
+            return aut.final.includes(estado);
+        }
+
+        function baixarArquivo(texto, nome) {
+            const blob = new Blob([texto], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = nome;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            console.log(`Arquivo "${nome}" iniciado para download`); // Log para confirmar download
+        }
+    </script>
+</body>
+</html>
