@@ -4,7 +4,7 @@ Este projeto da disciplina de Teoria da Computação implementa um simulador de 
 
 
 ## ⁇ Como usar
-1. Acessar a [página do simulador] (./index.html) ou abrir (`index.html`) localmente.
+1. Acessar a página do simulador (./index.html) ou abrir (`index.html`) localmente.
 2. Enviar os dois arquivos:
    - `.aut` → contendo o autômato no formato JSON.
    - `.in` → contendo as palavras e os resultados esperados (formato CSV).
